@@ -17,29 +17,36 @@
             :forTag="true"></sort-bar>
         </div>
 
-        <ul class="tags-list">
-            <li 
-            v-for="(tag, i) in tags" 
-            :key="i" 
-            class="tags">
-                <router-link class="router-link" :to="{name: 'studentTagDetail', params: { id: tag._id}}">
-                    {{ tag.name }}
-                </router-link>
+        <div v-if="isLoading" class="loading-container">
+            <div class="loader"></div>
+            <p>Loading tags...</p>
+        </div>
 
-                <span class="tag-desctiption">
-                    {{ getTruncatedDescription(tag.description) }}
-                </span>
-
-                <div class="question-quantity-created-time">
-                    <span class="question-quantity">
-                        {{ tag.questionQuantity }} questions
+        <div v-else>
+            <ul class="tags-list">
+                <li 
+                v-for="(tag, i) in tags" 
+                :key="i" 
+                class="tags">
+                    <router-link class="router-link" :to="{name: 'studentTagDetail', params: { id: tag._id}}">
+                        {{ tag.name }}
+                    </router-link>
+    
+                    <span class="tag-desctiption">
+                        {{ getTruncatedDescription(tag.description) }}
                     </span>
-                    <span class="created-time">
-                        created {{ formatRelativeTime(tag.createdAt) }}
-                    </span>
-                </div>
-            </li>
-        </ul>
+    
+                    <div class="question-quantity-created-time">
+                        <span class="question-quantity">
+                            {{ tag.questionQuantity }} questions
+                        </span>
+                        <span class="created-time">
+                            created {{ formatRelativeTime(tag.createdAt) }}
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -63,7 +70,8 @@
                 tagSpecification: 'A tag is a keyword or label that categorizes your question with other, similar questions. Using the right tags makes it easier for others to find and answer your question.',
                 tags: [],
                 originalTags: [],
-                resetSearch: false
+                resetSearch: false,
+                isLoading: true
             }
         },
         methods: {
@@ -75,23 +83,25 @@
             },
             async sortChanged(sortType) {
                 this.resetSearch = true;
+                this.isLoading = true;
 
-                if (sortType === 'Newest') {
-                    this.tags = await exportApis.tags.getTags();
-                    this.originalTags = this.tags;
-                    this.sortType = 'Newest';
+                setTimeout(async () => {
+                    if (sortType === 'Newest') {
+                        this.tags = await exportApis.tags.getTags();
+                        this.originalTags = this.tags;
+                        this.sortType = 'Newest';
+                    } else if (sortType === 'Name') {
+                        this.tags = await exportApis.tags.getTagsSort('name');
+                        this.originalTags = this.tags;
+                        this.sortType = 'Name';
+                    } else if (sortType === 'Popular') {
+                        this.tags = await exportApis.tags.getTagsSort('popular');
+                        this.originalTags = this.tags;
+                        this.sortType = 'Popular';
+                    }
                     this.resetSearch = false;
-                } else if (sortType === 'Name') {
-                    this.tags = await exportApis.tags.getTagsSort('name');
-                    this.originalTags = this.tags;
-                    this.sortType = 'Name';
-                    this.resetSearch = false;
-                } else if (sortType === 'Popular') {
-                    this.tags = await exportApis.tags.getTagsSort('popular');
-                    this.originalTags = this.tags;
-                    this.sortType = 'Popular';
-                    this.resetSearch = false;
-                }
+                    this.isLoading = false;
+                }, 500)
             },
             formatRelativeTime(timestamp) {
                 return dayjs(timestamp).fromNow();
@@ -110,7 +120,12 @@
             }
         },
         async mounted() {
-            this.tags = await exportApis.tags.getTags();
+            this.isLoading = true;
+
+            setTimeout(async () => {
+                this.tags = await exportApis.tags.getTags();
+                this.isLoading = false
+            }, 500)
             this.originalTags = this.tags;
         }
     }
@@ -217,6 +232,70 @@
         align-items: center;
         font-style: italic;
         color: inherit;
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        margin: 1rem 0;
+    }
+
+    .loader {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: inline-block;
+        position: relative;
+        border: 3px solid;
+        border-color: #2980b9 #2980b9 transparent transparent;
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+        animation: rotation 1s linear infinite;
+    }
+    .loader::after,
+    .loader::before {
+        content: '';  
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        border: 3px solid;
+        border-color: transparent transparent #4BACB8 #4BACB8;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-sizing: border-box;
+        animation: rotationBack 0.5s linear infinite;
+        transform-origin: center center;
+    }
+    .loader::before {
+        width: 32px;
+        height: 32px;
+        border-color: #2980b9 #2980b9 transparent transparent;
+        animation: rotation 1.5s linear infinite;
+    }
+        
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+        } 
+        @keyframes rotationBack {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(-360deg);
+        }
     }
 
     @keyframes fadeIn {
