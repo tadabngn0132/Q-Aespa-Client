@@ -299,7 +299,6 @@ tbody tr td.question-title-show ul.tags-list {
     align-items: center;
     gap: 0.75em;
     margin-top: 0.25em;
-    max-width: 35em;
 }
 
 .questions-container .question-list-cud-btn
@@ -495,6 +494,7 @@ tbody tr td.question-title-show
     
     .questions-container .question-list-cud-btn tbody tr td.question-title-show ul.tags-list {
         flex-wrap: wrap;
+        max-width: 35em;
     }
 }
 </style>

@@ -391,7 +391,6 @@
         align-items: center;
         margin-top: 0.25em;
         gap: 0.75em;
-        max-width: 25em;
     }
 
     .questions-container .question-list-cud-btn
@@ -671,8 +670,14 @@
             margin-top: 4px;
         }
         
-        .questions-container .question-list-cud-btn tbody tr td.question-title-show {
+        .questions-container .question-list-cud-btn tbody 
+        tr td.question-title-show {
             padding-right: 8px;
+        }
+
+        .questions-container .question-list-cud-btn
+        tbody tr td.question-title-show ul.tags-list {
+            max-width: 25em;
         }
     }
 </style>
