@@ -138,7 +138,7 @@ export default {
         },
         async refreshAnswers() {
             try {
-                this.answers = await exportApis.answers.getAnswers(this.question._id);
+                this.answers = await exportApis.answers.getAnswersScore(this.question._id);
                 this.answerCount = this.answers.length;
                 this.editingAnswer = {};
             } catch (error) {
@@ -190,7 +190,7 @@ export default {
                     this.isLoading = true;
                     try {
                         setTimeout(async () => {
-                            this.answers = await exportApis.answers.getAnswers(newId);
+                            this.answers = await exportApis.answers.getAnswersScore(newId);
                             this.answerCount = this.answers.length;
                             this.isLoading = false;
                         }, 500);

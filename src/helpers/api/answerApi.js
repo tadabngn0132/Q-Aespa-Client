@@ -61,5 +61,10 @@ export const answerApi = {
         const path = `questions/${questionId}/answers/${answerId}`;
         const res = await apiClient.answerApiClient.delete(path);
         return res.data;
-    })
+    }),
+    getAnswersScore: handleError(async (questionId) => {
+        const path = `questions/${questionId}/answers/sortByScore`
+        const res = await apiClient.answerApiClient.get(path);
+        return res.data;
+    }),
 };
