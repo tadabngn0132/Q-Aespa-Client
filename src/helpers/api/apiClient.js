@@ -3,8 +3,8 @@ import store from '@/store';
 import router from '@/router';
 import Vue from 'vue';
 
-// const baseURL = 'https://q-aespa-server.onrender.com/';
-const baseURL = 'http://localhost:5995/';
+const baseURL = 'https://q-aespa-server.onrender.com/';
+// const baseURL = 'http://localhost:5995/';
 
 const createHeaders = () => {
     const headers = {
